@@ -8,9 +8,11 @@ import com.murilonerdx.gerenciador.entity.request.UserRequestDTO;
 import com.murilonerdx.gerenciador.exceptions.EmailNotFoundException;
 import com.murilonerdx.gerenciador.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -28,23 +30,34 @@ public class UserController implements UserControllerDocs {
 
     @Override
     @PostMapping("/criar-usuario")
-    public ResponseEntity<UserDTO> create(@RequestBody UserRequestDTO userRequestDTO) {
-        return ResponseEntity.ok().body(service.criarUsuario(userRequestDTO));
+    public ResponseEntity<UserDTO> create(@RequestBody @Valid UserRequestDTO userRequestDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.criarUsuario(userRequestDTO));
     }
 
     @Override
-    @GetMapping("/search-email/{email}")
+    @GetMapping("/buscar-email/{email}")
     public ResponseEntity<UserDTO> findByEmail(@PathVariable("email") String email) throws EmailNotFoundException {
         return ResponseEntity.ok().body(service.procurarPorEmail(email));
     }
 
     @Override
-    public void delete(Long id) {
+    @DeleteMapping("/excluir-usuario/{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         service.deletarUsuario(id);
+        return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<UserDTO> update(Long id, UserRequestDTO userRequestDTO) {
+    @PutMapping(value="/atualizar-usuario/{id}")
+    public ResponseEntity<UserDTO> update(@PathVariable("id") Long id, @RequestBody @Valid UserRequestDTO userRequestDTO) {
         return ResponseEntity.ok().body(service.atualizarUsuario(id, userRequestDTO));
     }
+
+    @Override
+    @GetMapping(value="/buscar-id/{id}")
+    public ResponseEntity<UserDTO> findById(@PathVariable("id") Long id, UserRequestDTO userRequestDTO) {
+        return ResponseEntity.ok().body(service.buscarPorId(id));
+    }
+
+
 }

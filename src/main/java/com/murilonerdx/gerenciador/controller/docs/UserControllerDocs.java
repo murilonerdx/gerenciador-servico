@@ -53,8 +53,7 @@ public interface UserControllerDocs {
                     , @ApiResponse(code = 404,
                     message = "User not found error code")
             })
-    void
-    delete(Long id);
+    ResponseEntity<?> delete(Long id);
 
 
     @ApiOperation(value = "Update user by id operation")
@@ -66,4 +65,15 @@ public interface UserControllerDocs {
             })
     ResponseEntity<UserDTO>
     update(Long id, UserRequestDTO userRequestDTO);
+
+
+    @ApiOperation(value = "Find user by id operation")
+    @ApiResponses(value =
+            {
+                    @ApiResponse(code = 204, message = "Success user find user")
+                    , @ApiResponse(code = 404,
+                    message = "\"User not found error code")
+            })
+    ResponseEntity<UserDTO>
+    findById(Long id, UserRequestDTO userRequestDTO);
 }
