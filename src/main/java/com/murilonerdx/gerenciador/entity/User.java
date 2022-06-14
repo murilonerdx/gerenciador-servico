@@ -1,15 +1,13 @@
 package com.murilonerdx.gerenciador.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
 /* Classe responsavel pelos usuarios que vão ter acesso a novas pautas*/
 @Entity
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
