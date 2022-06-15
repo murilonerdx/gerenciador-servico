@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.br.CPF;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -19,4 +20,7 @@ public class UserRequestDTO {
 
     @Email(message="Por favor digite um e-mail valido!")
     private String email;
+
+    @CPF(message="Digite um cpf valido")
+    private String cpf;
 }
