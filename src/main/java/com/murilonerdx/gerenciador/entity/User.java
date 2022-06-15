@@ -1,5 +1,6 @@
 package com.murilonerdx.gerenciador.entity;
 
+import com.murilonerdx.gerenciador.entity.enums.StatusVote;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,15 +18,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String cpf;
+
+    @Enumerated(EnumType.STRING)
+    private StatusVote status;
 
     @Column(unique = true, nullable = false)
     private String email;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_rulling", joinColumns = {
-            @JoinColumn(name = "id_user")
-    }, inverseJoinColumns = {
-            @JoinColumn(name = "id_rulling")
-    })
-    private List<Rulling> rulling;
+    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    private Rulling rulling;
 }

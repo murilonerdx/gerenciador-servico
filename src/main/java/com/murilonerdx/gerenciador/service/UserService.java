@@ -2,7 +2,10 @@ package com.murilonerdx.gerenciador.service;
 
 import com.murilonerdx.gerenciador.dto.UserDTO;
 import com.murilonerdx.gerenciador.entity.User;
+import com.murilonerdx.gerenciador.entity.enums.StatusVote;
 import com.murilonerdx.gerenciador.entity.request.UserRequestDTO;
+import com.murilonerdx.gerenciador.entity.response.StatusResponse;
+import com.murilonerdx.gerenciador.exceptions.CpfNotFoundException;
 import com.murilonerdx.gerenciador.exceptions.EmailNotFoundException;
 import com.murilonerdx.gerenciador.exceptions.UserNotFoundException;
 import com.murilonerdx.gerenciador.repository.UserRepository;
@@ -11,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -27,6 +32,7 @@ public class UserService {
     public UserDTO criarUsuario(UserRequestDTO userDTO) {
         try{
             User user = DozerConverter.parseObject(userDTO, User.class);
+            user.setStatus(StatusVote.ABLE_TO_VOTE);
             return DozerConverter.parseObject(repository.save(user), UserDTO.class);
         }catch(DataIntegrityViolationException e){
             throw new DataIntegrityViolationException("Digite um email que não esteja cadastrado, e-mail: " + userDTO.getEmail() + " já está cadastrado");
@@ -70,5 +76,10 @@ public class UserService {
 
     public UserDTO buscarPorId(Long id) {
         return DozerConverter.parseObject(repository.findById(id), UserDTO.class);
+    }
+
+    public StatusResponse buscarCPF(String cpf) throws CpfNotFoundException {
+        User byCpf = repository.findByCpf(cpf).orElseThrow(()-> new CpfNotFoundException(cpf));
+        return new StatusResponse(byCpf.getStatus());
     }
 }

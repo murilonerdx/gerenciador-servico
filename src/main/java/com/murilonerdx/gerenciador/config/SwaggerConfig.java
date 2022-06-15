@@ -25,7 +25,8 @@ public class SwaggerConfig {
                 .select()
                 .apis(basePackage("com.murilonerdx.gerenciador.controller"))
                 .paths(PathSelectors.any())
-                .build()
+                .build().groupName("gerenciador-service v1.0")
+
                 .apiInfo(apiInfo());
     }
 

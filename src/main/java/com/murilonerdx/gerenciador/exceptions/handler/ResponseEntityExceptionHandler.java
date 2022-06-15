@@ -1,5 +1,6 @@
 package com.murilonerdx.gerenciador.exceptions.handler;
 
+import com.murilonerdx.gerenciador.exceptions.CpfNotFoundException;
 import com.murilonerdx.gerenciador.exceptions.EmailNotFoundException;
 import com.murilonerdx.gerenciador.exceptions.UserNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,6 +23,12 @@ public class ResponseEntityExceptionHandler {
     public ApiError handleValidationExceptions(MethodArgumentNotValidException e) {
         BindingResult bindingResult = e.getBindingResult();
         return new ApiError(bindingResult);
+    }
+
+    @ExceptionHandler(CpfNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError handleValidationExceptions(CpfNotFoundException e) {
+        return new ApiError(e.getMessage());
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
