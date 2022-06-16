@@ -59,7 +59,7 @@ public interface UserControllerDocs {
     @ApiOperation(value = "Update user by id operation")
     @ApiResponses(value =
             {
-                    @ApiResponse(code = 204, message = "Success user updated user")
+                    @ApiResponse(code = 204, message = "Success user updated")
                     , @ApiResponse(code = 404,
                     message = "Missing required fields, wrong field range value or user already registered on system")
             })

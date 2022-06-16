@@ -8,19 +8,29 @@ import com.murilonerdx.gerenciador.entity.response.StatusResponse;
 import com.murilonerdx.gerenciador.exceptions.CpfNotFoundException;
 import com.murilonerdx.gerenciador.exceptions.EmailNotFoundException;
 import com.murilonerdx.gerenciador.exceptions.UserNotFoundException;
+import com.murilonerdx.gerenciador.jws.JmsConsumer;
 import com.murilonerdx.gerenciador.repository.UserRepository;
 import com.murilonerdx.gerenciador.util.DozerConverter;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
+@Slf4j
 @Service
 public class UserService {
+    Logger logger = LogManager.getLogger(UserService.class);
+
+    @Autowired
+    JmsTemplate jmsTemplate;
+
+    @Autowired
+    JmsConsumer jmsConsumer;
 
     @Autowired
     private UserRepository repository;
@@ -30,19 +40,28 @@ public class UserService {
     }
 
     public UserDTO criarUsuario(UserRequestDTO userDTO) {
-        try{
+        try {
+//            jmsTemplate.convertAndSend("fila.votacao.resultado", new Gson().toJson(userDTO));
+//            Integer totalPendingMessages = this.jmsTemplate.browse("fila.votacao.resultado", (session, browser) -> Collections.list(browser.getEnumeration()).size());
+//            int i = totalPendingMessages == null ? 0 : totalPendingMessages;
+//
+//            System.out.println(i);
+
             User user = DozerConverter.parseObject(userDTO, User.class);
             user.setStatus(StatusVote.ABLE_TO_VOTE);
+            logger.info("Criando um novo usuario {}", user.getId());
             return DozerConverter.parseObject(repository.save(user), UserDTO.class);
-        }catch(DataIntegrityViolationException e){
-            throw new DataIntegrityViolationException("Digite um email que não esteja cadastrado, e-mail: " + userDTO.getEmail() + " já está cadastrado");
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException("Digite um email/CPF que não esteja cadastrado");
         }
     }
 
     public UserDTO procurarPorEmail(String email) throws EmailNotFoundException {
         try {
+            logger.info("Procurando e-mail: " + email);
             return DozerConverter.parseObject(repository.findByEmail(email), UserDTO.class);
         } catch (Exception e) {
+            logger.error("Erro encontrado: " + e.getMessage());
             throw new EmailNotFoundException(email);
         }
     }
@@ -50,10 +69,13 @@ public class UserService {
     public void deletarUsuario(Long id) {
         try {
             User user = repository.findById(id)
-                    .orElseThrow(()->
+                    .orElseThrow(() ->
                             new UserNotFoundException("Usuario com id: " + id + " não encontrado"));
+
+            logger.info("Deletando Usuario: " + user.getName());
             repository.delete(user);
         } catch (UserNotFoundException e) {
+            logger.error("Erro encontrado: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -61,14 +83,16 @@ public class UserService {
 
     public UserDTO atualizarUsuario(Long id, UserRequestDTO userDTO) {
         try {
-            User newUser = repository.findById(id).orElseThrow(()->
+            User newUser = repository.findById(id).orElseThrow(() ->
                     new UserNotFoundException("Usuario com id: " + id + " não encontrado"));
 
             User oldUser = DozerConverter.parseObject(userDTO, User.class);
             oldUser.setId(newUser.getId());
 
+            logger.info("Atualizando usuario: " + oldUser.getName());
             return DozerConverter.parseObject(repository.save(oldUser), UserDTO.class);
         } catch (UserNotFoundException e) {
+            logger.error("Erro encontrado: " + e.getMessage());
             e.printStackTrace();
         }
         return null;
@@ -79,7 +103,7 @@ public class UserService {
     }
 
     public StatusResponse buscarCPF(String cpf) throws CpfNotFoundException {
-        User byCpf = repository.findByCpf(cpf).orElseThrow(()-> new CpfNotFoundException(cpf));
+        User byCpf = repository.findByCpf(cpf).orElseThrow(() -> new CpfNotFoundException(cpf));
         return new StatusResponse(byCpf.getStatus());
     }
 }

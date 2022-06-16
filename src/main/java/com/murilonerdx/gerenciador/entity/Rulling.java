@@ -17,6 +17,8 @@ public class Rulling {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String name;
+    private int hoursOpen = 1;
     private int qtVotes;
     private boolean isRullingOpen;
 }
