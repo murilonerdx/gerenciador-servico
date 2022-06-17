@@ -58,7 +58,7 @@ public class UserControllerTest {
         String json = new ObjectMapper().writeValueAsString(dto);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(USER_API + "/criar-usuario")
+                .post(USER_API + "/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(json);
@@ -81,7 +81,7 @@ public class UserControllerTest {
         BDDMockito.given(service.procurarPorEmail(Mockito.any(String.class))).willReturn(userDTO);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .get(USER_API.concat("/buscar-email/" + URLEncoder.encode(userDTO.getEmail(), StandardCharsets.UTF_8)))
+                .get(USER_API.concat("/search-email/" + URLEncoder.encode(userDTO.getEmail(), StandardCharsets.UTF_8)))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(json);
@@ -97,7 +97,7 @@ public class UserControllerTest {
         BDDMockito.given(service.buscarPorId(anyLong()))
                 .willReturn(UserDTO.builder().id(1L).build());
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .delete(USER_API.concat("/excluir-usuario/" + 1))
+                .delete(USER_API.concat("/" + 1))
                 .accept(MediaType.APPLICATION_JSON);
 
         mvc.perform(request)
@@ -119,7 +119,7 @@ public class UserControllerTest {
         BDDMockito.given(service.atualizarUsuario(id, userRequestDTO)).willReturn(updatedUser);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .put(USER_API.concat("/atualizar-usuario/" + 1))
+                .put(USER_API.concat("/" + 1))
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
