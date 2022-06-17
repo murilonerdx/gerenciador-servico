@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = UserController.class)
 @AutoConfigureMockMvc
 public class UserControllerTest {
-    static String USER_API = "/v1/api/users";
+    static String USER_API = "/v1/api/user";
 
     @Autowired
     MockMvc mvc;

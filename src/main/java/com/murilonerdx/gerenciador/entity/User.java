@@ -4,7 +4,6 @@ import com.murilonerdx.gerenciador.entity.enums.StatusVote;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 
 /* Classe responsavel pelos usuarios que vão ter acesso a novas pautas*/
 @Entity
@@ -28,6 +27,6 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-    private Rulling rulling;
+    @ManyToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    private Schedule schedule;
 }

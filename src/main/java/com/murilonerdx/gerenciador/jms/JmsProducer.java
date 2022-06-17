@@ -1,4 +1,4 @@
-package com.murilonerdx.gerenciador.jws;
+package com.murilonerdx.gerenciador.jms;
 
 import com.google.gson.Gson;
 import com.murilonerdx.gerenciador.entity.User;
