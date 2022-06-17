@@ -23,4 +23,7 @@ public class UserRequestDTO {
 
     @CPF(message="Por favor digite um cpf valido")
     private String cpf;
+
+    @NotEmpty
+    private String password;
 }

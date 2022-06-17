@@ -4,13 +4,17 @@ import com.murilonerdx.gerenciador.exceptions.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Date;
 
 @ControllerAdvice
 @RestController
@@ -75,5 +79,16 @@ public class ResponseEntityExceptionHandler {
     public ResponseEntity handleReponseStatusException(ResponseStatusException ex){
         return new ResponseEntity(new ApiError(ex), ex.getStatus());
     }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ApiError handleReponseStatusException(BadCredentialsException ex){
+        return new ApiError(ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidJwtAuthenticationException.class)
+    public ApiError handleReponseStatusException(InvalidJwtAuthenticationException ex){
+        return new ApiError(ex);
+    }
+
 
 }

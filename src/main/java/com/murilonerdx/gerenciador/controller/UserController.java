@@ -9,6 +9,8 @@ import com.murilonerdx.gerenciador.exceptions.CpfNotFoundException;
 import com.murilonerdx.gerenciador.exceptions.EmailNotFoundException;
 import com.murilonerdx.gerenciador.service.UserService;
 import com.murilonerdx.gerenciador.util.CPFValidation;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -52,12 +54,18 @@ public class UserController implements UserControllerDocs {
     }
 
     @Override
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Authorization token",
+                    required = true, dataType = "string", paramType = "header")})
     @GetMapping(value="/search-email/{email}", produces = {"application/json", "application/xml", "application/x-yaml"})
     public ResponseEntity<UserDTO> findByEmail(@PathVariable("email") String email) throws EmailNotFoundException {
         return ResponseEntity.ok().body(service.procurarPorEmail(email));
     }
 
     @Override
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Authorization token",
+                    required = true, dataType = "string", paramType = "header")})
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         service.deletarUsuario(id);
@@ -65,6 +73,9 @@ public class UserController implements UserControllerDocs {
     }
 
     @Override
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Authorization token",
+                    required = true, dataType = "string", paramType = "header")})
     @PutMapping(value = "/{id}",
             produces = {"application/json", "application/xml", "application/x-yaml"},
             consumes = {"application/json", "application/xml", "application/x-yaml"})
@@ -73,11 +84,17 @@ public class UserController implements UserControllerDocs {
     }
 
     @Override
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Authorization token",
+                    required = true, dataType = "string", paramType = "header")})
     @GetMapping(value = "/search-id/{id}", produces = {"application/json", "application/xml", "application/x-yaml"})
     public ResponseEntity<UserDTO> findById(@PathVariable("id") Long id) {
         return ResponseEntity.ok().body(service.buscarPorId(id));
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Authorization token",
+                    required = true, dataType = "string", paramType = "header")})
     @GetMapping(value = "/{cpf}", produces = {"application/json", "application/xml", "application/x-yaml"})
     public ResponseEntity<?> findByCPF(@PathVariable("cpf") @CPF(message = "Digite um CPF valido") String cpf) throws CpfNotFoundException {
         if (CPFValidation.isValid(cpf)) {
