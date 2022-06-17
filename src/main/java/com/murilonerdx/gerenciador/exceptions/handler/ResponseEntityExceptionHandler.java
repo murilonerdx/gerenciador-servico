@@ -1,8 +1,6 @@
 package com.murilonerdx.gerenciador.exceptions.handler;
 
-import com.murilonerdx.gerenciador.exceptions.CpfNotFoundException;
-import com.murilonerdx.gerenciador.exceptions.EmailNotFoundException;
-import com.murilonerdx.gerenciador.exceptions.UserNotFoundException;
+import com.murilonerdx.gerenciador.exceptions.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +32,24 @@ public class ResponseEntityExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiError handleValidationExceptions(DataIntegrityViolationException e) {
+        return new ApiError(e.getMessage());
+    }
+
+    @ExceptionHandler(ScheduleNameException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleValidationExceptions(ScheduleNameException e) {
+        return new ApiError(e.getMessage());
+    }
+
+    @ExceptionHandler(ScheduledNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError handleValidationExceptions(ScheduledNotFoundException e) {
+        return new ApiError(e.getMessage());
+    }
+
+    @ExceptionHandler(VotacaoFinalizadaException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleValidationExceptions(VotacaoFinalizadaException e) {
         return new ApiError(e.getMessage());
     }
 

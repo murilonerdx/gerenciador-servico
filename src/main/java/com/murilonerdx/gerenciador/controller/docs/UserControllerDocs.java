@@ -8,10 +8,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@Api("Users management")
+@Api(tags="Users management")
 public interface UserControllerDocs {
 
     @ApiOperation(value = "User creation operation")
@@ -44,7 +45,11 @@ public interface UserControllerDocs {
                             message = "Return all registered users")
             })
     ResponseEntity<List<UserDTO>>
-    findAll();
+    findAll(
+            @RequestParam(value="page", defaultValue = "0") int page,
+            @RequestParam(value="limit", defaultValue = "12") int limit,
+            @RequestParam(value="direction", defaultValue = "asc") String direction
+    );
 
     @ApiOperation(value = "Delete user by id operation")
     @ApiResponses(value =
@@ -75,5 +80,5 @@ public interface UserControllerDocs {
                     message = "\"User not found error code")
             })
     ResponseEntity<UserDTO>
-    findById(Long id, UserRequestDTO userRequestDTO);
+    findById(Long id);
 }
