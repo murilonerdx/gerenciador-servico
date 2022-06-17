@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @javax.validation.constraints.Pattern.List({@javax.validation.constraints.Pattern(regexp = "([0-9]{3}[.]?[0-9]{3}[.]?[0-9]{3}-[0-9]{2})|([0-9]{11})"), @javax.validation.constraints.Pattern(regexp = "^(?:(?!000\\.?000\\.?000-?00).)*$"), @javax.validation.constraints.Pattern(regexp = "^(?:(?!111\\.?111\\.?111-?11).)*$"), @javax.validation.constraints.Pattern(regexp = "^(?:(?!222\\.?222\\.?222-?22).)*$"), @javax.validation.constraints.Pattern(regexp = "^(?:(?!333\\.?333\\.?333-?33).)*$"), @javax.validation.constraints.Pattern(regexp = "^(?:(?!444\\.?444\\.?444-?44).)*$"), @javax.validation.constraints.Pattern(regexp = "^(?:(?!555\\.?555\\.?555-?55).)*$"), @javax.validation.constraints.Pattern(regexp = "^(?:(?!666\\.?666\\.?666-?66).)*$"), @javax.validation.constraints.Pattern(regexp = "^(?:(?!777\\.?777\\.?777-?77).)*$"), @javax.validation.constraints.Pattern(regexp = "^(?:(?!888\\.?888\\.?888-?88).)*$"), @javax.validation.constraints.Pattern(regexp = "^(?:(?!999\\.?999\\.?999-?99).)*$")})
-public class CPFValidation {
+public abstract class CPFValidation {
 
     public static boolean isValid(String CPF) {
         if (CPF.equals("00000000000") ||

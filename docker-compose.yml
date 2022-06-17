@@ -9,14 +9,62 @@ services:
       TZ: America/Sao_Paulo
       SPRING_BOOT_ENVIRONMENT: Test
     ports:
-      - "8080:8080"
+      - "8081:8081"
     command: mvn spring-boot:run
     links:
       - db
     depends_on:
       - db
     networks:
-      - gerenciador-network
+      - monitoring-network
+  db:
+    image: postgres:12
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus/prometheus.yml
+      - ./prometheus/alert.rules:/etc/prometheus/prometheus/alert.rules
+    ports:
+      - 9090:9090
+    networks:
+      - monitoring-network
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    volumes:
+      - ./prometheus/data/grafana/data:/var/lib/grafana
+    ports:
+      - 3000:3000
+    networks:
+      - monitoring-network
+    depends_on:
+      - prometheus
+  sonarqube:
+    image: sonarqube:community
+    depends_on:
+      - db
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    ports:
+      - "9000:9000"
 networks:
-  gerenciador-network:
+  monitoring-network:
     driver: bridge
+volumes:
+  sonarqube_extensions:
+  sonarqube_logs:
+  postgresql:
+  postgresql_data:
+    driver: local
+  sonarqube_data:
+    driver: local
+  pgadmin:

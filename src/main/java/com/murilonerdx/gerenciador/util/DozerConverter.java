@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /* Classe responsavel pela conversão de DTO para Model e Model para DTO */
-public class DozerConverter {
+public abstract class DozerConverter {
     public static Mapper mapper = DozerBeanMapperBuilder.buildDefault();
 
     public static <O,D> D parseObject(O origin, Class<D> destination){
