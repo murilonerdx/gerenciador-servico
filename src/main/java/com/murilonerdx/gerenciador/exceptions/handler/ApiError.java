@@ -2,6 +2,7 @@ package com.murilonerdx.gerenciador.exceptions.handler;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.murilonerdx.gerenciador.exceptions.EmailNotFoundException;
+import com.murilonerdx.gerenciador.exceptions.InvalidJwtAuthenticationException;
 import com.murilonerdx.gerenciador.exceptions.UserNotFoundException;
 import lombok.*;
 import org.springframework.validation.BindingResult;
@@ -39,6 +40,10 @@ public class ApiError {
 
     public ApiError(String e){
         this.errors = Collections.singletonList(e);
+    }
+
+    public ApiError(InvalidJwtAuthenticationException ex) {
+        this.errors = Collections.singletonList(ex.getMessage());
     }
 
     public List<String> getErrors() {
