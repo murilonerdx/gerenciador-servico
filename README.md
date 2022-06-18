@@ -10,15 +10,16 @@ $ mvn clean package
 $ mvn spring-boot:run
 
 ```
-
+[Não por onde começar, então click em mim.](HELP.md)
 
 [![Build Status](https://app.travis-ci.com/murilonerdx/gerenciador-service.svg?branch=master)](https://app.travis-ci.com/murilonerdx/gerenciador-service)
 
 Projeto atualmente em: **Spring Boot**
 
 # Prometheus com Docker
+<img src=".github/prometheus.png" alt="Prometheus"/>
 
-Integração com com Grafana utilizando Prometheus.
+Integração com Grafana utilizando Prometheus.
 
 **Prometheus**: um sistema de coleta de métricas de aplicações e serviços para armazenamento em um banco de dados de séries temporais. É muito eficiente. - AlertManager: trabalha de forma integrada com a Prometheus para avaliar regras de alerta e enviar notificações por e-mail, Jira, Slack, e outros sistemas suportados
 
@@ -37,10 +38,10 @@ OBS: GRAFANA, SONARQUBE, PROMETHEUS implementação com docker
 docker-compose up
 ```
 
-
-
 ## Prometheus + Grafana
-Sistem de coleta de metricas processamento paineis, estabilidade, leitura de logs, integridade.
+Sistema de coleta de metricas e processamento com paineis, estabilidade, leitura de logs, integridade.
+
+<img src=".github/config_grafana_prometheus.png" alt="Prometheus e Grafana config"/>
 
 ```
 # my global config
@@ -76,6 +77,8 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     scrape_interval: 5s
 ```
+
+<img src=".github/grafana_prometheus.png" alt="Prometheus e Grafana Implementação"/>
 
 ## Spring Actuator
 Verificação e integridade da aplicação
