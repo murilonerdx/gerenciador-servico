@@ -17,6 +17,7 @@ $ mvn spring-boot:run
 Projeto atualmente em: **Spring Boot**
 
 # Prometheus com Docker
+<img src=".github/prometheus.png" alt="Prometheus"/>
 
 Integração com com Grafana utilizando Prometheus.
 
@@ -41,6 +42,8 @@ docker-compose up
 
 ## Prometheus + Grafana
 Sistem de coleta de metricas processamento paineis, estabilidade, leitura de logs, integridade.
+
+<img src=".github/config_grafana_prometheus.png" alt="Prometheus e Grafana config"/>
 
 ```
 # my global config
@@ -76,6 +79,8 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     scrape_interval: 5s
 ```
+
+<img src=".github/grafana_prometheus.png" alt="Prometheus e Grafana"/>
 
 ## Spring Actuator
 Verificação e integridade da aplicação
