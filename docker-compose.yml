@@ -9,7 +9,7 @@ services:
       TZ: America/Sao_Paulo
       SPRING_BOOT_ENVIRONMENT: Test
     ports:
-      - "8081:8081"
+      - "8080:8080"
     command: mvn spring-boot:run
     links:
       - db
