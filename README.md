@@ -80,7 +80,7 @@ scrape_configs:
     scrape_interval: 5s
 ```
 
-<img src=".github/grafana_prometheus.png" alt="Prometheus e Grafana"/>
+<img src=".github/grafana_prometheus.png" alt="Prometheus e Grafana Implementação"/>
 
 ## Spring Actuator
 Verificação e integridade da aplicação
