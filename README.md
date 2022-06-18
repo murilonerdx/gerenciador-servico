@@ -10,7 +10,7 @@ $ mvn clean package
 $ mvn spring-boot:run
 
 ```
-[Não por onde começar, então click em mim.](HELP.md)
+[Não sabe por onde começar, então click em mim.](HELP.md)
 
 [![Build Status](https://app.travis-ci.com/murilonerdx/gerenciador-service.svg?branch=master)](https://app.travis-ci.com/murilonerdx/gerenciador-service)
 
@@ -21,7 +21,8 @@ Projeto atualmente em: **Spring Boot**
 
 Integração com Grafana utilizando Prometheus.
 
-**Prometheus**: um sistema de coleta de métricas de aplicações e serviços para armazenamento em um banco de dados de séries temporais. É muito eficiente. - AlertManager: trabalha de forma integrada com a Prometheus para avaliar regras de alerta e enviar notificações por e-mail, Jira, Slack, e outros sistemas suportados
+**Prometheus**: um sistema de coleta de métricas em aplicações e serviços para armazenamento em um banco de dados de séries temporais. É muito eficiente. 
+- AlertManager: trabalha de forma integrada com a Prometheus para avaliar regras de alerta e enviar notificações por e-mail, Jira, Slack, e outros sistemas suportados
 
 OBS: GRAFANA, SONARQUBE, PROMETHEUS implementação com docker
 
