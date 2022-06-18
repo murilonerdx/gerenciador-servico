@@ -2,6 +2,16 @@
 # gerenciador-service
 Gerenciador, objetivo principal gerir sessões de votação de forma flexivel
 
+```bash
+$ git clone https://github.com/murilonerdx/gerenciador-service.git
+$ cd gerenciador-service
+$ mvn clean install
+$ mvn clean package
+$ mvn spring-boot:run
+
+```
+
+
 [![Build Status](https://app.travis-ci.com/murilonerdx/gerenciador-service.svg?branch=master)](https://app.travis-ci.com/murilonerdx/gerenciador-service)
 
 Projeto atualmente em: **Spring Boot**
@@ -12,12 +22,25 @@ Integração com com Grafana utilizando Prometheus.
 
 **Prometheus**: um sistema de coleta de métricas de aplicações e serviços para armazenamento em um banco de dados de séries temporais. É muito eficiente. - AlertManager: trabalha de forma integrada com a Prometheus para avaliar regras de alerta e enviar notificações por e-mail, Jira, Slack, e outros sistemas suportados
 
-**Grafana**: sendo uma solução de código aberto, também nos permite escrever plug-ins do zero para integração com várias fontes de dados diferentes. A ferramenta nos ajuda a estudar, analisar e monitorar dados ao longo de um período de tempo, tecnicamente chamado de análise de série temporal.
+OBS: GRAFANA, SONARQUBE, PROMETHEUS implementação com docker
 
-- http://localhost:9090/ (prometheus)
+**Grafana**: sendo uma solução de código aberto, também nos permite escrever plug-ins do zero para integração com várias fontes de dados diferentes. A ferramenta nos ajuda a estudar, analisar e monitorar dados ao longo de um período de tempo, tecnicamente chamado de análise de série temporal.
+- http://localhost:8080/swagger-ui/index.html#/ (swagger)
+- http://localhost:8080/actuator (actuator/info)
+- http://localhost:9090/ (prometheus) 
 - http://localhost:3000/ (grafana)
 - prometheus.yml
 - appfile.log
+- logs/**
+
+```
+docker-compose up
+```
+
+
+
+## Prometheus + Grafana
+Sistem de coleta de metricas processamento paineis, estabilidade, leitura de logs, integridade.
 
 ```
 # my global config
@@ -54,7 +77,6 @@ scrape_configs:
     scrape_interval: 5s
 ```
 
-
 ## Spring Actuator
 Verificação e integridade da aplicação
 **application.properties**
@@ -65,18 +87,40 @@ management.endpoint.info.enabled=true
 management.endpoints.web.exposure.include=info, health, metrics, prometheus
 ```
 
+## Log4j
+Guardando registros da aplicação mantendo a integridade da aplicação
+- log4j.xml
+- log4j2.xml
+- logback-spring.xml
+**application.properties**
+
+```
+management.info.git.mode=simple
+logging.level.org.hibernate.SQL=DEBUG
+```
+
+
+
+## ActiveMQ
+Recurso de mensageria
+
+
 ## Ambientes
 
 | Nome | Endereço |
 | ------ | ------ |
-| Test | http://localhost:8080/swagger-ui/index.html# |
-| Produção |  |
+| Test/Dev | http://localhost:8080/swagger-ui/index.html# |
+| Produção | https://gerenciador-service.herokuapp.com/swagger-ui/index.html# |
 
 
 | Nome | Endereço |
 | ------ | ------ |
 | Test | https://github.com/murilonerdx/gerenciador-service/blob/master/src/main/resources/application-test.properties |
-| Produção |  |
+| Dev | https://github.com/murilonerdx/gerenciador-service/blob/master/src/main/resources/application-dev.properties |
+| Produção | https://github.com/murilonerdx/gerenciador-service/blob/master/src/main/resources/application-prod.properties |
+
+## Features não implementadas
+feature v1: https://github.com/murilonerdx/gerenciador-service/tree/feature/security_implementation
 
 
 
