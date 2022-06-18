@@ -128,7 +128,7 @@ public class ScheduleService {
         if (schedule.getActiveStatus().equals(ActiveVote.VF)) {
             ScheduleDTO scheduleDTO = DozerConverter.parseObject(schedule, ScheduleDTO.class);
 
-            return new ResultResponse(scheduleDTO, schedule.getUsers().size());
+            return new ResultResponse(scheduleDTO, schedule.getQtVotes());
         }
         throw new ScheduleNameException("A votação ainda não foi finaliza espere até " + localDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
 
