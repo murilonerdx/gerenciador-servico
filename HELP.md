@@ -48,6 +48,11 @@ Abrindo a sessão para votação
 <img src=".github/abrir_sessao.png" alt="Abrir sessão"/>
 
 ## Vote e espere o fim do tempo determinado da pauta
+
+Importante votar na pauta, não é possivel votar em varias pautas.
+
+<img src=".github/votar_pauta.png" alt="Votar pauta"/>
+
 ## Veja os resultados
 
 <img src=".github/ver_resultado.png" alt="Ver resultado"/>
