@@ -10,7 +10,7 @@ $ mvn clean package
 $ mvn spring-boot:run
 
 ```
-
+[Não por onde começar, então click em mim.](HELP.md)
 
 [![Build Status](https://app.travis-ci.com/murilonerdx/gerenciador-service.svg?branch=master)](https://app.travis-ci.com/murilonerdx/gerenciador-service)
 
@@ -37,8 +37,6 @@ OBS: GRAFANA, SONARQUBE, PROMETHEUS implementação com docker
 ```
 docker-compose up
 ```
-
-
 
 ## Prometheus + Grafana
 Sistema de coleta de metricas e processamento com paineis, estabilidade, leitura de logs, integridade.
