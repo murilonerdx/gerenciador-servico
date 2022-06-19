@@ -4,6 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.murilonerdx.gerenciador.entity.enums.ActiveVote;
 import lombok.*;
 
+import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -14,5 +18,4 @@ public class ScheduleDTO {
     private String name;
     private int minutesOpen = 1;
     private ActiveVote activeStatus;
-
 }

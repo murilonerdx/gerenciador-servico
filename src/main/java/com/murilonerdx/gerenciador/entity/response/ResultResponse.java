@@ -10,5 +10,5 @@ import lombok.*;
 @NoArgsConstructor
 public class ResultResponse {
     ScheduleDTO schedule;
-    int result;
+    int qtdVotes;
 }

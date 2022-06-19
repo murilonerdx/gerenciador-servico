@@ -17,6 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.jms.JMSException;
+import javax.naming.NamingException;
 import java.util.List;
 
 @RestController
@@ -70,7 +72,7 @@ public class ScheduleController implements ScheduleControllerDocs {
 
     @Override
     @PostMapping(value = "/vote/{idSchedule}/user/{idUser}", produces = {"application/json", "application/xml", "application/x-yaml"})
-    public ResponseEntity<?> vote(@PathVariable("idSchedule") Long idSchedule, @PathVariable("idUser") Long idUser) throws UserNotFoundException, ScheduledNotFoundException, VotacaoFinalizadaException {
+    public ResponseEntity<?> vote(@PathVariable("idSchedule") Long idSchedule, @PathVariable("idUser") Long idUser) throws UserNotFoundException, ScheduledNotFoundException, VotacaoFinalizadaException, NamingException, JMSException {
         service.votar(idSchedule, idUser);
 
         return ResponseEntity.ok().body("Seu voto foi computado");
@@ -78,7 +80,7 @@ public class ScheduleController implements ScheduleControllerDocs {
 
     @Override
     @GetMapping(value = "/open-schedule/{id}", produces = {"application/json", "application/xml", "application/x-yaml"})
-    public ResponseEntity<?> openSchedule(@PathVariable("id") Long id) throws ScheduledNotFoundException, VotacaoFinalizadaException {
+    public ResponseEntity<?> openSchedule(@PathVariable("id") Long id) throws ScheduledNotFoundException, VotacaoFinalizadaException, NamingException, JMSException {
         return ResponseEntity.ok().body(service.abrirPauta(id));
     }
 

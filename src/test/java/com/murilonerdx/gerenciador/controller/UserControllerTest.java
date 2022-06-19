@@ -3,12 +3,9 @@ package com.murilonerdx.gerenciador.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.murilonerdx.gerenciador.dto.UserDTO;
 import com.murilonerdx.gerenciador.entity.User;
-import com.murilonerdx.gerenciador.entity.request.UserRequestDTO;
-import com.murilonerdx.gerenciador.exceptions.EmailNotFoundException;
-import com.murilonerdx.gerenciador.exceptions.UserNotFoundException;
+import com.murilonerdx.gerenciador.entity.request.UserRequest;
 import com.murilonerdx.gerenciador.service.UserService;
 import com.murilonerdx.gerenciador.util.DozerConverter;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -31,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -54,7 +49,7 @@ public class UserControllerTest {
         UserDTO build = UserDTO.builder().id(1L).email("mu-silva@outlook.com").name("Murilo P.S").build();
         UserDTO dto =  userDTOCreate();
 
-        BDDMockito.given(service.criarUsuario(Mockito.any(UserRequestDTO.class))).willReturn(build);
+        BDDMockito.given(service.criarUsuario(Mockito.any(UserRequest.class))).willReturn(build);
         String json = new ObjectMapper().writeValueAsString(dto);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -110,13 +105,13 @@ public class UserControllerTest {
         Long id = 1L;
 
         UserDTO updatingUser = UserDTO.builder().id(id).name("Murilo P.S").email("mu-silva@outlook.com").build();
-        UserRequestDTO userRequestDTO = DozerConverter.parseObject(updatingUser, UserRequestDTO.class);
-        String json = new ObjectMapper().writeValueAsString(userRequestDTO);
+        UserRequest userRequest = DozerConverter.parseObject(updatingUser, UserRequest.class);
+        String json = new ObjectMapper().writeValueAsString(userRequest);
 
         BDDMockito.given(service.buscarPorId(id)).willReturn(updatingUser);
         UserDTO updatedUser = UserDTO.builder().id(id).name("Roberto").email("mu-silva@outlook.com").build();
 
-        BDDMockito.given(service.atualizarUsuario(id, userRequestDTO)).willReturn(updatedUser);
+        BDDMockito.given(service.atualizarUsuario(id, userRequest)).willReturn(updatedUser);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .put(USER_API.concat("/" + 1))
