@@ -39,7 +39,7 @@ public class UserService {
         try {
             User user = DozerConverter.parseObject(userDTO, User.class);
             user.setStatusVote(StatusVote.ABLE_TO_VOTE);
-            logger.info("Criando um novo usuario  "+ user.getId());
+            logger.info("Criando um novo usuario  "+ user.getName());
             return DozerConverter.parseObject(userRepository.save(user), UserDTO.class);
         } catch (DataIntegrityViolationException e) {
             throw new DataIntegrityViolationException("Digite um email/CPF que não esteja cadastrado");

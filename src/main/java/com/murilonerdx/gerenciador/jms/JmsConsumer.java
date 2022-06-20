@@ -37,7 +37,7 @@ public class JmsConsumer {
     @Autowired
     private UserRepository userRepository;
 
-    @JmsListener( destination = "${activemq.fila.votacao}")
+    @JmsListener( destination = "${activemq.fila.votacao}", containerFactory = "jmsListenerContainerFactory")
     public void listenVote(String voteDTO) {
         try {
             Gson gson = new Gson();
@@ -51,15 +51,14 @@ public class JmsConsumer {
             voto.setSchedule(schedule.get());
             voteRepository.save(voto);
 
-
-            schedule.get().setEndSchedule(LocalDateTime.now());
-            List<User> users = scheduleService.validUsersVote(schedule.get());
-            userRepository.saveAll(users);
+            if(schedule.get().getEndSchedule() != null){
+                schedule.get().setEndSchedule(LocalDateTime.now());
+                List<User> users = scheduleService.validUsersVote(schedule.get());
+                userRepository.saveAll(users);
+            }
 
             List<Vote> bySchedule = voteRepository.findBySchedule(schedule.get());
-
-            schedule.get().setQtVotes(bySchedule.size());
-            scheduledRepository.save(schedule.get());
+            scheduleService.getVotesAndSave(schedule.get(),bySchedule);
         }catch(Exception e){
             e.printStackTrace();
         }

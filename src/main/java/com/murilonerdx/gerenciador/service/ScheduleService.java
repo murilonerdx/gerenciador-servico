@@ -79,6 +79,8 @@ public class ScheduleService {
             schedule.setActiveStatus(ActiveVote.EV);
             schedule.setStartSchedule(LocalDateTime.now());
             threadPending(schedule);
+
+            scheduledRepository.save(schedule);
             return DozerConverter.parseObject(scheduledRepository.save(schedule), ScheduleDTO.class);
         } else {
             throw new VotacaoFinalizadaException(schedule.getActiveStatus());
@@ -89,15 +91,25 @@ public class ScheduleService {
         new Thread(() -> {
             try {
                 Thread.sleep(schedule.getMinutesOpen() * 60000L);
-
                 schedule.setName(schedule.getName() + " - FINALIZADO - " + LocalDateTime.now());
                 schedule.setActiveStatus(ActiveVote.VF);
+                schedule.setEndSchedule(LocalDateTime.now());
 
-                scheduledRepository.save(schedule);
+                List<User> users = validUsersVote(schedule);
+                userRepository.saveAll(users);
+
+                List<Vote> bySchedule = voteRepository.findBySchedule(schedule);
+
+                getVotesAndSave(schedule, bySchedule);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    public void getVotesAndSave(Schedule schedule, List<Vote> bySchedule) {
+        schedule.setQtVotes(bySchedule.size());
+        scheduledRepository.save(schedule);
     }
 
     public List<User> validUsersVote(Schedule schedule) {
@@ -150,7 +162,7 @@ public class ScheduleService {
     }
 
     public ResultResponse result(Long id) throws ScheduleNameException {
-        Schedule schedule = scheduledRepository.findById(id).get();
+        Schedule schedule = scheduledRepository.findById(id).orElseThrow(() -> new ScheduleNameException("Essa pauta não existe"));
         if (schedule.getStartSchedule() != null) {
             LocalDateTime localDateTime = schedule.getStartSchedule().plusMinutes(schedule.getMinutesOpen());
 
@@ -158,11 +170,11 @@ public class ScheduleService {
                 ScheduleDTO scheduleDTO = DozerConverter.parseObject(schedule, ScheduleDTO.class);
 
                 return new ResultResponse(scheduleDTO, schedule.getQtVotes());
-            } else if(schedule.getEndSchedule() == null && schedule.getActiveStatus().equals(ActiveVote.VF) ){
+            } else if(schedule.getEndSchedule() == null && schedule.getActiveStatus().equals(ActiveVote.EV) ){
                 throw new ScheduleNameException("A votação ainda não foi finaliza espere até " + localDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
             }
         }
-        return null;
+        throw new ScheduleNameException("A votação está sendo computada aguarde ");
     }
 
     @CacheEvict(value = "schedules", allEntries = true)
