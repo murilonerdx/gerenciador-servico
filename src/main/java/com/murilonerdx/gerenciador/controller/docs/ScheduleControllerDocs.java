@@ -14,7 +14,6 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.jms.JMSException;
 import javax.naming.NamingException;
 import java.util.List;
 
@@ -77,7 +76,7 @@ public interface ScheduleControllerDocs {
                     , @ApiResponse(code = 404,
                     message = "\"Schedule not found error code")
             })
-    ResponseEntity<?> vote(Long id, Long idUser) throws UserNotFoundException, ScheduledNotFoundException, VotacaoFinalizadaException, NamingException, JMSException;
+    ResponseEntity<?> vote(Long id, Long idUser) throws UserNotFoundException, ScheduledNotFoundException, VotacaoFinalizadaException, NamingException;
 
 
     @ApiOperation(value = "Open schedule operation")
@@ -87,7 +86,7 @@ public interface ScheduleControllerDocs {
                     , @ApiResponse(code = 404,
                     message = "\"Schedule not found error code")
             })
-    ResponseEntity<?> openSchedule(Long id) throws ScheduledNotFoundException, VotacaoFinalizadaException, NamingException, JMSException;
+    ResponseEntity<?> openSchedule(Long id) throws ScheduledNotFoundException, VotacaoFinalizadaException, NamingException;
 
     @ApiOperation(value = "Open session schedule operation")
     @ApiResponses(value =

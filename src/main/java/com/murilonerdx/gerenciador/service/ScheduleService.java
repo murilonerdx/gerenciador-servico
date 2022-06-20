@@ -1,6 +1,5 @@
 package com.murilonerdx.gerenciador.service;
 
-import com.murilonerdx.gerenciador.dto.ScheduleConsumerDTO;
 import com.murilonerdx.gerenciador.dto.ScheduleDTO;
 import com.murilonerdx.gerenciador.entity.Schedule;
 import com.murilonerdx.gerenciador.entity.User;
@@ -12,8 +11,6 @@ import com.murilonerdx.gerenciador.exceptions.ScheduleNameException;
 import com.murilonerdx.gerenciador.exceptions.ScheduledNotFoundException;
 import com.murilonerdx.gerenciador.exceptions.UserNotFoundException;
 import com.murilonerdx.gerenciador.exceptions.VotacaoFinalizadaException;
-import com.murilonerdx.gerenciador.jms.JmsConsumer;
-import com.murilonerdx.gerenciador.jms.JmsProducer;
 import com.murilonerdx.gerenciador.repository.ScheduleRepository;
 import com.murilonerdx.gerenciador.repository.UserRepository;
 import com.murilonerdx.gerenciador.repository.VoteRepository;
@@ -24,7 +21,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.jms.JMSException;
 import javax.naming.NamingException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -38,12 +34,6 @@ public class ScheduleService {
 
     @Autowired
     ScheduleRepository scheduledRepository;
-
-    @Autowired
-    JmsConsumer jmsConsumer;
-
-    @Autowired
-    JmsProducer jmsProducer;
 
     @Autowired
     VoteRepository voteRepository;
@@ -134,24 +124,21 @@ public class ScheduleService {
         }
     }
 
-    public ScheduleDTO votar(Long id, Long idUser) throws ScheduledNotFoundException, VotacaoFinalizadaException, UserNotFoundException, NamingException, JMSException {
+    public ScheduleDTO votar(Long id, Long idUser) throws ScheduledNotFoundException, VotacaoFinalizadaException, UserNotFoundException {
         Schedule schedule = scheduledRepository.findById(id).orElseThrow(() -> new ScheduledNotFoundException("Scheduled com id: " + id + " não existe!"));
         User user = userRepository.findById(idUser).orElseThrow(() -> new UserNotFoundException("Usuario id: " + idUser + " não está cadastrado"));
 
         Optional<Vote> byUser = voteRepository.findByScheduleAndUser(schedule, user);
         if (schedule.getActiveStatus().equals(ActiveVote.EV)
                 && byUser.isEmpty() && (user.getStatusVote().equals(StatusVote.ABLE_TO_VOTE))) {
-            ScheduleConsumerDTO scheduleConsumerDTO = new ScheduleConsumerDTO();
+            Vote vote = new Vote();
+            vote.setUser(user);
+            vote.setSchedule(schedule);
 
             user.setStatusVote(StatusVote.UNABLE_TO_VOTE);
             userRepository.save(user);
 
-            scheduleConsumerDTO.setEmail(user.getEmail());
-            scheduleConsumerDTO.setCpf(user.getCpf());
-            scheduleConsumerDTO.setIdSchedule(schedule.getId());
-
-            jmsProducer.sendVote(scheduleConsumerDTO);
-
+            voteRepository.save(vote);
         } else if (user.getStatusVote().equals(StatusVote.UNABLE_TO_VOTE)) {
             throw new ScheduledNotFoundException("Você já votou, espere a pauta " + schedule.getName() + " terminar para que consiga votar novamente");
         } else {
