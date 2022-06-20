@@ -12,6 +12,7 @@ import javax.persistence.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name="tb_user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,12 +22,10 @@ public class User {
     @Column(unique = true, nullable = false)
     private String cpf;
 
-    @Enumerated(EnumType.STRING)
-    private StatusVote status;
-
     @Column(unique = true, nullable = false)
     private String email;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-    private Schedule schedule;
+    @Enumerated(EnumType.STRING)
+    private StatusVote statusVote;
+
 }

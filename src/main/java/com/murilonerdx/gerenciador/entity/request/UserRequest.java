@@ -14,7 +14,7 @@ import javax.validation.constraints.NotEmpty;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRequestDTO {
+public class UserRequest {
     @NotEmpty(message="Por favor digite um nome!")
     private String name;
 

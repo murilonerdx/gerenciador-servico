@@ -1,6 +1,7 @@
 package com.murilonerdx.gerenciador.jms;
 
 import com.google.gson.Gson;
+import com.murilonerdx.gerenciador.dto.ScheduleConsumerDTO;
 import com.murilonerdx.gerenciador.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,13 +14,10 @@ public class JmsProducer {
 
     private final JmsTemplate jmsTemplate;
 
-    @Value("${activemq.name}")
-    private String destinationQueue;
+    @Value("${activemq.fila.votacao}")
+    private String destinationQueueVotacao;
 
-    public void send(User user){
-        Gson gson = new Gson();
-        String jsonPerson = gson.toJson(user);
-        jmsTemplate.convertAndSend(destinationQueue, jsonPerson);
+    public void sendVote(ScheduleConsumerDTO scheduleConsumerDTO){
+        jmsTemplate.convertAndSend(destinationQueueVotacao, scheduleConsumerDTO.toJson());
     }
-
 }

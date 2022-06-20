@@ -3,8 +3,7 @@ package com.murilonerdx.gerenciador.controller;
 
 import com.murilonerdx.gerenciador.controller.docs.UserControllerDocs;
 import com.murilonerdx.gerenciador.dto.UserDTO;
-import com.murilonerdx.gerenciador.entity.User;
-import com.murilonerdx.gerenciador.entity.request.UserRequestDTO;
+import com.murilonerdx.gerenciador.entity.request.UserRequest;
 import com.murilonerdx.gerenciador.exceptions.CpfNotFoundException;
 import com.murilonerdx.gerenciador.exceptions.EmailNotFoundException;
 import com.murilonerdx.gerenciador.service.UserService;
@@ -20,8 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping(value = "/v1/api/user")
@@ -47,8 +44,8 @@ public class UserController implements UserControllerDocs {
     @Override
     @PostMapping(value="/", produces = {"application/json", "application/xml", "application/x-yaml"},
             consumes = {"application/json", "application/xml", "application/x-yaml"})
-    public ResponseEntity<UserDTO> create(@RequestBody @Valid UserRequestDTO userRequestDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.criarUsuario(userRequestDTO));
+    public ResponseEntity<UserDTO> create(@RequestBody @Valid UserRequest userRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.criarUsuario(userRequest));
     }
 
     @Override
@@ -68,8 +65,8 @@ public class UserController implements UserControllerDocs {
     @PutMapping(value = "/{id}",
             produces = {"application/json", "application/xml", "application/x-yaml"},
             consumes = {"application/json", "application/xml", "application/x-yaml"})
-    public ResponseEntity<UserDTO> update(@PathVariable("id") Long id, @RequestBody @Valid UserRequestDTO userRequestDTO) {
-        return ResponseEntity.ok().body(service.atualizarUsuario(id, userRequestDTO));
+    public ResponseEntity<UserDTO> update(@PathVariable("id") Long id, @RequestBody @Valid UserRequest userRequest) {
+        return ResponseEntity.ok().body(service.atualizarUsuario(id, userRequest));
     }
 
     @Override

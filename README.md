@@ -7,8 +7,7 @@ $ git clone https://github.com/murilonerdx/gerenciador-service.git
 $ cd gerenciador-service
 $ mvn clean install
 $ mvn clean package
-$ mvn spring-boot:run
-
+$ mvn spring-boot:run /(docker-compose up)
 ```
 [Não sabe por onde começar, então click em mim.](HELP.md)
 
@@ -36,7 +35,24 @@ OBS: GRAFANA, SONARQUBE, PROMETHEUS implementação com docker
 - logs/**
 
 ```
-docker-compose up
+docker build -t nodej/nodej .
+```
+
+## Implementação com docker. 
+
+Importante lembrar da modificação no properties que vai utilizar, para que a implementação com docker funcione, mude localhost para db e activemq
+
+**application.properties**
+
+```
+java.naming.provider.url=tcp://activemq:61616
+spring.activemq.broker-url=tcp://activemq:61616?jms.redeliveryPolicy.maximumRedeliveries=1
+```
+
+**application.properties**
+
+```
+spring.datasource.url=jdbc:postgresql://db:5432/gerenciador-service
 ```
 
 ## Prometheus + Grafana

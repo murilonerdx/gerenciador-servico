@@ -1,6 +1,7 @@
 package com.murilonerdx.gerenciador.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.murilonerdx.gerenciador.entity.enums.ActiveVote;
 import lombok.*;
 
@@ -17,6 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name="tb_schedule")
 public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +34,4 @@ public class Schedule {
 
     @Enumerated(EnumType.STRING)
     private ActiveVote activeStatus;
-
-    @OneToMany(mappedBy="schedule", fetch=FetchType.EAGER)
-    private List<User> users = new ArrayList<>();
 }

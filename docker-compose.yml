@@ -1,30 +1,58 @@
 version: '1.0'
 services:
+  db:
+    # Use the Docker Image postgres. This will pull the 12 version.
+    image: postgres:12
+    # Give the container the name postgres-db. You can changes to something else.
+    container_name: postgres-db
+    restart: always
+    # Set a volume some that database is not lost after shutting down the container.
+    # I used the name postgres-data but you can changed it to something else.
+    networks:
+      - monitoring-network
+    # Maps port 5432 (localhost) to port 5432 on the container. You can change the ports to fix your needs.
+    ports:
+      - "5432:5432"
+    # Setup the username, password, and database name. You can changes these values.
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: gerenciador-service
+      PGDATA: /var/lib/postgresql/data/pgdata
+    # Service health check
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 1m
+      timeout: 10s
+      retries: 2
+  activemq:
+    image: symptoma/activemq:latest
+    container_name: 'activemq'
+    ports:
+      - "61616:61616"
+    volumes:
+      - ~/Documents/data/activemq/data:/data/activemq
+      - ~/Documents/data/activemq/log:/var/log/activemq
+    networks:
+      - monitoring-network
   gerenciador-service:
     image: murilonerdx/gerenciador-service
-    restart: always
-    build: ./
+    build:
+      context: ./
+      dockerfile: Dockerfile
     working_dir: /
     environment:
       TZ: America/Sao_Paulo
-      SPRING_BOOT_ENVIRONMENT: Test
+      SPRING_BOOT_ENVIRONMENT: Development
+    volumes:
+      - ~/.m2:/root/.m2
     ports:
       - "8080:8080"
-    command: mvn spring-boot:run
-    links:
-      - db
+    command: mvn clean spring-boot:run
     depends_on:
       - db
     networks:
       - monitoring-network
-  db:
-    image: postgres:12
-    environment:
-      POSTGRES_USER: sonar
-      POSTGRES_PASSWORD: sonar
-    volumes:
-      - postgresql:/var/lib/postgresql
-      - postgresql_data:/var/lib/postgresql/data
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -32,7 +60,7 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus/prometheus.yml
       - ./prometheus/alert.rules:/etc/prometheus/prometheus/alert.rules
     ports:
-      - 9090:9090
+      - "9090:9090"
     networks:
       - monitoring-network
   grafana:
@@ -41,30 +69,16 @@ services:
     volumes:
       - ./prometheus/data/grafana/data:/var/lib/grafana
     ports:
-      - 3000:3000
+      - "3000:3000"
     networks:
       - monitoring-network
     depends_on:
       - prometheus
-  sonarqube:
-    image: sonarqube:community
-    depends_on:
-      - db
-    volumes:
-      - sonarqube_data:/opt/sonarqube/data
-      - sonarqube_extensions:/opt/sonarqube/extensions
-      - sonarqube_logs:/opt/sonarqube/logs
-    ports:
-      - "9000:9000"
 networks:
   monitoring-network:
     driver: bridge
 volumes:
-  sonarqube_extensions:
-  sonarqube_logs:
   postgresql:
+    driver: local
   postgresql_data:
     driver: local
-  sonarqube_data:
-    driver: local
-  pgadmin:

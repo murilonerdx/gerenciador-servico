@@ -33,7 +33,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo(){
         return new ApiInfoBuilder()
                 .title("gerenciador-service")
-                .description("Projeto com objetivo principal processo seletivo da NTConsult")
+                .description("Projeto com objetivo principal processo seletivo da NTConsult - Sistema de votação em pautas")
                 .version("1.0")
                 .contact(contact())
                 .build();

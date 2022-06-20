@@ -1,30 +1,64 @@
 package com.murilonerdx.gerenciador.jms;
 
 import com.google.gson.Gson;
+import com.murilonerdx.gerenciador.dto.ScheduleConsumerDTO;
+import com.murilonerdx.gerenciador.entity.Schedule;
 import com.murilonerdx.gerenciador.entity.User;
+import com.murilonerdx.gerenciador.entity.Vote;
+import com.murilonerdx.gerenciador.entity.enums.ActiveVote;
+import com.murilonerdx.gerenciador.entity.enums.StatusVote;
+import com.murilonerdx.gerenciador.repository.ScheduleRepository;
 import com.murilonerdx.gerenciador.repository.UserRepository;
+import com.murilonerdx.gerenciador.repository.VoteRepository;
+import com.murilonerdx.gerenciador.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
 public class JmsConsumer {
 
-    private List<User> users = new ArrayList<>();
-    private final UserRepository repository;
+    @Autowired
+    VoteRepository voteRepository;
 
-    @JmsListener( destination = "${activemq.name}" )
-    public void listen(String mensagem) {
-        User user = new User();
+    @Autowired
+    ScheduleRepository scheduledRepository;
+
+    @Autowired
+    ScheduleService scheduleService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @JmsListener( destination = "${activemq.fila.votacao}", containerFactory = "jmsListenerContainerFactory")
+    public void listenVote(String voteDTO) {
         try {
-            System.out.println(mensagem);
             Gson gson = new Gson();
-            user = gson.fromJson(mensagem, User.class);
-            repository.save(user);
+
+            ScheduleConsumerDTO vote = gson.fromJson(voteDTO, ScheduleConsumerDTO.class);
+            Optional<Schedule> schedule = scheduledRepository.findById(vote.getIdSchedule());
+            Optional<User> user = userRepository.findByCpf(vote.getCpf());
+
+            Vote voto = new Vote();
+            voto.setUser(user.get());
+            voto.setSchedule(schedule.get());
+            voteRepository.save(voto);
+
+            if(schedule.get().getEndSchedule() != null){
+                schedule.get().setEndSchedule(LocalDateTime.now());
+                List<User> users = scheduleService.validUsersVote(schedule.get());
+                userRepository.saveAll(users);
+            }
+
+            List<Vote> bySchedule = voteRepository.findBySchedule(schedule.get());
+            scheduleService.getVotesAndSave(schedule.get(),bySchedule);
         }catch(Exception e){
             e.printStackTrace();
         }

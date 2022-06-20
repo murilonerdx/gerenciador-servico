@@ -3,13 +3,13 @@ package com.murilonerdx.gerenciador.service;
 import com.murilonerdx.gerenciador.dto.UserDTO;
 import com.murilonerdx.gerenciador.entity.User;
 import com.murilonerdx.gerenciador.entity.enums.StatusVote;
-import com.murilonerdx.gerenciador.entity.request.UserRequestDTO;
+import com.murilonerdx.gerenciador.entity.request.UserRequest;
 import com.murilonerdx.gerenciador.entity.response.StatusResponse;
 import com.murilonerdx.gerenciador.exceptions.CpfNotFoundException;
 import com.murilonerdx.gerenciador.exceptions.EmailNotFoundException;
 import com.murilonerdx.gerenciador.exceptions.UserNotFoundException;
-import com.murilonerdx.gerenciador.jms.JmsConsumer;
 import com.murilonerdx.gerenciador.repository.UserRepository;
+import com.murilonerdx.gerenciador.repository.VoteRepository;
 import com.murilonerdx.gerenciador.util.DozerConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -29,31 +28,19 @@ public class UserService {
     Logger logger = LogManager.getLogger(UserService.class);
 
     @Autowired
-    JmsTemplate jmsTemplate;
-
-    @Autowired
-    JmsConsumer jmsConsumer;
-
-    @Autowired
-    private UserRepository repository;
+    private UserRepository userRepository;
 
     public List<UserDTO> listarTodosUsuarios(Pageable pageable) {
-        Page<User> all = repository.findAll(pageable);
+        Page<User> all = userRepository.findAll(pageable);
         return DozerConverter.parseListObjects(all.getContent(), UserDTO.class);
     }
 
-    public UserDTO criarUsuario(UserRequestDTO userDTO) {
+    public UserDTO criarUsuario(UserRequest userDTO) {
         try {
-//            jmsTemplate.convertAndSend("fila.votacao.resultado", new Gson().toJson(userDTO));
-//            Integer totalPendingMessages = this.jmsTemplate.browse("fila.votacao.resultado", (session, browser) -> Collections.list(browser.getEnumeration()).size());
-//            int i = totalPendingMessages == null ? 0 : totalPendingMessages;
-//
-//            System.out.println(i);
-
             User user = DozerConverter.parseObject(userDTO, User.class);
-            user.setStatus(StatusVote.ABLE_TO_VOTE);
-            logger.info("Criando um novo usuario {}", user.getId());
-            return DozerConverter.parseObject(repository.save(user), UserDTO.class);
+            user.setStatusVote(StatusVote.ABLE_TO_VOTE);
+            logger.info("Criando um novo usuario  "+ user.getName());
+            return DozerConverter.parseObject(userRepository.save(user), UserDTO.class);
         } catch (DataIntegrityViolationException e) {
             throw new DataIntegrityViolationException("Digite um email/CPF que não esteja cadastrado");
         }
@@ -61,53 +48,52 @@ public class UserService {
 
     public UserDTO procurarPorEmail(String email) throws EmailNotFoundException {
         try {
-            logger.info("Procurando e-mail: {}", email);
-            return DozerConverter.parseObject(repository.findByEmail(email).get(), UserDTO.class);
+            logger.info("Procurando e-mail:  "+ email);
+            return DozerConverter.parseObject(userRepository.findByEmail(email).get(), UserDTO.class);
         } catch (Exception e) {
-            logger.error("Erro encontrado: {}", e.getMessage());
+            logger.error("Erro encontrado: "+ e.getMessage());
             throw new EmailNotFoundException(email);
         }
     }
 
     public void deletarUsuario(Long id) {
         try {
-            User user = repository.findById(id)
+            User user = userRepository.findById(id)
                     .orElseThrow(() ->
                             new UserNotFoundException("Usuario com id: " + id + " não encontrado"));
 
-            logger.info("Deletando Usuario: {}", user.getName());
-            repository.delete(user);
+            logger.info("Deletando Usuario:  "+ user.getName());
+            userRepository.delete(user);
         } catch (UserNotFoundException e) {
-            logger.error("Erro encontrado: {}", e.getMessage());
+            logger.error("Erro encontrado:  "+ e.getMessage());
             e.printStackTrace();
         }
     }
 
 
-    public UserDTO atualizarUsuario(Long id, UserRequestDTO userDTO) {
+    public UserDTO atualizarUsuario(Long id, UserRequest userDTO) {
         try {
-            User oldUser = repository.findById(id).orElseThrow(() ->
+            User oldUser = userRepository.findById(id).orElseThrow(() ->
                     new UserNotFoundException("Usuario com id: " + id + " não encontrado"));
 
             User newUser = DozerConverter.parseObject(userDTO, User.class);
             newUser.setId(oldUser.getId());
-            newUser.setStatus(oldUser.getStatus());
 
-            logger.info("Atualizando usuario: {}", oldUser.getName());
-            return DozerConverter.parseObject(repository.save(oldUser), UserDTO.class);
+            logger.info("Atualizando usuario:  "+ oldUser.getName());
+            return DozerConverter.parseObject(userRepository.save(oldUser), UserDTO.class);
         } catch (UserNotFoundException e) {
-            logger.error("Erro encontrado: {}",e.getMessage());
+            logger.error("Erro encontrado:  "+e.getMessage());
             e.printStackTrace();
         }
         return null;
     }
 
     public UserDTO buscarPorId(Long id) {
-        return DozerConverter.parseObject(repository.findById(id).get(), UserDTO.class);
+        return DozerConverter.parseObject(userRepository.findById(id).get(), UserDTO.class);
     }
 
     public StatusResponse buscarCPF(String cpf) throws CpfNotFoundException {
-        User byCpf = repository.findByCpf(cpf).orElseThrow(() -> new CpfNotFoundException(cpf));
-        return new StatusResponse(byCpf.getStatus());
+        User byCpf = userRepository.findByCpf(cpf).orElseThrow(() -> new CpfNotFoundException(cpf));
+        return new StatusResponse(byCpf.getStatusVote());
     }
 }

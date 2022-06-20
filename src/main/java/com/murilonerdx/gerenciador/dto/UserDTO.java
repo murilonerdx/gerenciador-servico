@@ -11,7 +11,9 @@ import lombok.*;
 public class UserDTO {
     private Long id;
     private String name;
+
     @JsonIgnore
     private Integer idRulling;
     private String email;
+
 }
